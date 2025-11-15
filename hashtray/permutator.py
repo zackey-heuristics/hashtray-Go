@@ -13,16 +13,18 @@ class Permute:
         self.len_domains = len(self.domains)
 
     def get_combination_count(self) -> int:
-        # Calculate the total number of combinations for tdqm bar progress
+        """
+        Calculate the total number of combinations for tdqm bar progress
+        """
         total = 0
         for r in range(1, self.len_chunks + 1):
             if r == 1:
                 # Add single chunks
                 total += self.len_chunks
             else:
-                # Calc. combinations
+                # Combinations calc.
                 combinations = itertools.combinations(range(self.len_chunks), r)
-                # Calc. permutations
+                # Permutations calc.
                 permutations = itertools.permutations(range(r))
                 # Total possibilities for n chunks
                 combination_count = len(list(combinations)) * len(list(permutations))
@@ -37,7 +39,9 @@ class Permute:
         return total * self.len_domains
 
     def combinator(self) -> Generator[str, Any, None]:
-        # Generate all possible email combinations for unique elements
+        """
+        Generate all email combinations for unique elements
+        """
 
         # Generate all permutations/combinations of elements
         # Per chunk
