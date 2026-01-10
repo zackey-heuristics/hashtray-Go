@@ -34,7 +34,7 @@ dependencies = [
     "tqdm",
     "rich",
     "tldextract",
-    "scrapling[fetchers]"
+    "selectolax>=0.4.6",
 ]
 
 [tool.hatch.version]
