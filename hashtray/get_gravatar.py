@@ -1,14 +1,11 @@
 import hashlib
-import logging
 import re
 
 import httpx
 from rich.console import Console
 from rich.table import Table
 from rich.theme import Theme
-from scrapling.fetchers import AsyncFetcher
-
-logging.getLogger("scrapling").setLevel(logging.CRITICAL)
+from selectolax.parser import HTMLParser
 
 class Gravatar:
     def __init__(self, email=None, ghash: str = None, account: str = None):
@@ -26,7 +23,8 @@ class Gravatar:
             self.hash = ghash
         else:
             self.check_email()
-            self.hash = hashlib.md5(email.encode()).hexdigest()
+            self.email = self.email.strip().lower()
+            self.hash = hashlib.md5(self.email.encode()).hexdigest()
             self.account_url = self.gravatar_url + self.hash
         self.json_hash = None
         self.is_exists = False
@@ -46,7 +44,7 @@ class Gravatar:
         """
         Get the user's json data from Gravatar
         """
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             try:
                 res = await client.get(self.account_url + ".json")
                 res.raise_for_status()
@@ -71,66 +69,88 @@ class Gravatar:
         """
         Scrap the user account page to retrieve all infos as the json/API is now limited
         """
+        def text_or_none(node):
+            return node.text().strip() if node else None
+
         def find_accounts(page):
-            if verified := page.find(".is-verified-accounts"):
-                accounts_list = []
-                for account in verified.find_all(".card-item__info"):
-                    network = account.find(".card-item__label-text").text.clean()
-                    urls = account.find_all("a")
-                    for url in urls:
-                        if url.attrib.get("class") != "card-item__checkmark-icon":
-                            account_url = url.attrib["href"]
-                            accounts_list.append({"account": network, "url": account_url})
-                return accounts_list
-            return None
+            verified = page.css_first(".is-verified-accounts")
+            if not verified:
+                return None
+            accounts_list = []
+            for account in verified.css(".card-item__info"):
+                network = text_or_none(account.css_first(".card-item__label-text"))
+                for url in account.css("a"):
+                    classes = url.attributes.get("class", "")
+                    if "card-item__checkmark-icon" in classes:
+                        continue
+                    href = url.attributes.get("href")
+                    if href:
+                        accounts_list.append({"account": network, "url": href})
+            return accounts_list or None
 
         def find_images(page):
-            if gallery := page.find(".g-profile__photo-gallery"):
-                images_list = []
-                for image in gallery.find_all("img"):
-                    url = image.attrib["data-url"] + "?size=666"
-                    images_list.append(url)
-                return images_list
-            return None
+            gallery = page.css_first(".g-profile__photo-gallery")
+            if not gallery:
+                return None
+            images_list = []
+            for image in gallery.css("img"):
+                data_url = image.attributes.get("data-url")
+                if data_url:
+                    images_list.append(f"{data_url}?size=666")
+            return images_list or None
 
         def find_payments(page):
-            if payment := page.find(".payments-drawer"):
-                payment_list = []
-                for item in payment.find_all(".card-item"):
-                    title = item.find(".card-item__label-text").text.clean()
-                    try:
-                        asset = item.find("a").attrib["href"]
-                    except:
-                        asset = item.find(".card-item__info span:not(.card-item__label-text)").text.clean()
-                    payment_list.append({"title": title, "asset": asset})
-                return payment_list if len(payment_list) > 0 else None
-            return None
+            payment = page.css_first(".payments-drawer")
+            if not payment:
+                return None
+            payment_list = []
+            for item in payment.css(".card-item"):
+                title = text_or_none(item.css_first(".card-item__label-text"))
+                link = item.css_first("a")
+                if link and link.attributes.get("href"):
+                    asset = link.attributes.get("href")
+                else:
+                    span = item.css_first(".card-item__info span:not(.card-item__label-text)")
+                    asset = text_or_none(span)
+                payment_list.append({"title": title, "asset": asset})
+            return payment_list or None
 
         def find_interests(page):
-            if interests := page.find(".g-profile__interests-list"):
-                interests_list = []
-                for interest in interests.find_all("li a"):
-                    interests_list.append(interest.text.clean())
-                for interest in interests.find_all("li span"):
-                    interests_list.append(interest.text.clean())
-                return interests_list
-            return None
+            interests = page.css_first(".g-profile__interests-list")
+            if not interests:
+                return None
+            interests_list = []
+            for interest in interests.css("li a"):
+                value = text_or_none(interest)
+                if value:
+                    interests_list.append(value)
+            for interest in interests.css("li span"):
+                value = text_or_none(interest)
+                if value:
+                    interests_list.append(value)
+            return interests_list or None
 
         def find_links(page):
-            if links := page.find(".g-profile__links"):
-                links_list = []
-                for link in links.find_all(".card-item__info"):
-                    description = None
-                    a = link.find("a")
-                    name = a.text.clean()[:-2]
-                    url = a.attrib["href"]
-                    if desc := link.find("p"):
-                        description = desc.text
-                    links_list.append({"name": name, "url": url, "description": description})
-                return links_list
-            return None
+            links = page.css_first(".g-profile__links")
+            if not links:
+                return None
+            links_list = []
+            for link in links.css(".card-item__info"):
+                a = link.css_first("a")
+                if not a:
+                    continue
+                name = text_or_none(a)
+                if name and len(name) >= 2:
+                    name = name[:-2]
+                url = a.attributes.get("href")
+                description = text_or_none(link.css_first("p"))
+                links_list.append({"name": name, "url": url, "description": description})
+            return links_list or None
 
-        gravatar_page = await AsyncFetcher().get(self.account_url)
+        async with httpx.AsyncClient(follow_redirects=True) as client:
+            res = await client.get(self.account_url)
+            res.raise_for_status()
+        gravatar_page = HTMLParser(res.text)
 
         scrapped_infos = {
             "accounts": find_accounts(gravatar_page),
