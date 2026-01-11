@@ -5,7 +5,7 @@
 </p>
 
 [![PyPI version](https://badge.fury.io/py/hashtray.svg)](https://badge.fury.io/py/hashtray)
-![Python minimum version](https://img.shields.io/badge/Python-3.8%2B-brightgreen)
+![Python minimum version](https://img.shields.io/badge/Python-3.10%2B-brightgreen)
 [![Downloads](https://pepy.tech/badge/hashtray)](https://pepy.tech/project/hashtray)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License](https://img.shields.io/github/license/balestek/medor.svg)](https://github.com/<balestek>/medor/blob/master/LICENSE)
@@ -59,7 +59,7 @@ If the profile is public and the information available, the following can be ret
 
 ## Installation
 
-Python 3.8+ is required.
+Python 3.10+ is required.
 
 ### pipx (recommended)
 
@@ -215,7 +215,6 @@ Here is the same table for the crazy mode `--crazy`, `-c` (any special character
 ### Next steps for future versions
 
 - [ ] Improve the domain lists (better ranking by users) and add a "small" one.
-- [ ] Add an intermediate mode between normal and crazy for "" and any special character at any place.
 - [ ] Add multi-processing
 
 ### Contributions
@@ -244,7 +243,7 @@ httpx
 unidecode
 tqdm
 rich
-scrapling
+selectolax
 ```
 
 ## License
