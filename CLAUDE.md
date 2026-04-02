@@ -2,23 +2,23 @@
 
 ## Project Overview
 
-**hashtray** is an OSINT tool for Gravatar. It finds Gravatar accounts from email addresses and locates email addresses from Gravatar usernames or hashes. This repository is a Go rewrite of the original Python tool ([balestek/hashtray](https://github.com/balestek/hashtray)).
+**hashtray-go** is an OSINT tool for Gravatar. It finds Gravatar accounts from email addresses and locates email addresses from Gravatar usernames or hashes. This repository is a Go rewrite of the original Python tool ([balestek/hashtray](https://github.com/balestek/hashtray)).
 
 ## Goal
 
-Produce a single, statically-linked Go binary that runs on Linux, macOS, and Windows with no external runtime dependencies. See Issue #1.
+Produce a single, statically-linked Go binary (`hashtray-go`) that runs on Linux, macOS, and Windows with no external runtime dependencies. See Issue #1.
 
-## Repository Layout (target)
+## Repository Layout
 
 ```
 .
-├── cmd/hashtray/       # main package — CLI entry point
+├── cmd/hashtray/       # main package — CLI entry point (binary name: hashtray-go)
 ├── internal/
 │   ├── gravatar/       # Gravatar API client & HTML scraper
 │   ├── enumerator/     # email enumeration logic
 │   ├── permutator/     # combination/permutation generator
 │   └── elements/       # element extraction from Gravatar profiles
-├── data/               # embedded JSON domain lists
+├── godata/             # embedded JSON domain lists
 ├── .github/workflows/  # CI (test) and Release (build + publish) workflows
 ├── go.mod / go.sum
 ├── Makefile
@@ -28,17 +28,17 @@ Produce a single, statically-linked Go binary that runs on Linux, macOS, and Win
 ## Build & Test Commands
 
 ```bash
-make build      # build binary
+make build      # build hashtray-go binary
 make test       # run all tests
 make lint       # run golangci-lint
 make clean      # remove build artifacts
+make cross      # cross-compile for all platforms
 ```
 
 ## Conventions
 
 - Use `//go:embed` to embed domain list JSON files into the binary.
 - Use standard library where possible; minimise third-party dependencies.
-- Acceptable dependencies: `github.com/spf13/cobra` (CLI), `github.com/fatih/color` (terminal colors), `golang.org/x/net/html` (HTML parsing).
 - All packages under `internal/` — not intended for external import.
 - Tests live alongside source files (`*_test.go`).
 - CGO disabled (`CGO_ENABLED=0`) for all builds.
