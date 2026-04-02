@@ -114,6 +114,10 @@ func (e *Enumerator) Run() error {
 	fmt.Printf("Elements to permute: ")
 	yellow.Println(strings.Join(e.chunks, ", "))
 	fmt.Printf("Number of email domains: %d\n", len(e.domains))
+	if count < 0 {
+		color.Yellow("Warning: combination count overflows; progress bar will be approximate.\n")
+		count = 0
+	}
 	fmt.Printf("Number of possible combinations: %d\n\n", count)
 
 	// Hash function
