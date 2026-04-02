@@ -1,0 +1,9 @@
+# Go binaries (root level only)
+/hashtray-go
+/dist/
+/core
+
+# IDE
+.idea/
+*.swp
+*.swo
