@@ -1,6 +1,7 @@
 # Go binaries (root level only)
-/hashtray
+/hashtray-go
 /dist/
+/core
 
 # IDE
 .idea/

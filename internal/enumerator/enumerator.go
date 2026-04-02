@@ -195,7 +195,7 @@ func (e *Enumerator) resolveAccount() error {
 			if len(e.opts.Elements) == 0 {
 				red.Printf("A matching Gravatar account for %s could not be retrieved.\n\n", e.account)
 				fmt.Println("To continue, you'll need the account's hash and some known elements about the target.")
-				fmt.Println("Use: hashtray account <HASH> -e element1 element2 ...")
+				fmt.Println("Use: hashtray-go account <HASH> -e element1 element2 ...")
 				return fmt.Errorf("no gravatar profile found")
 			}
 			red.Printf("No Gravatar account found for the provided hash: %s.\n", e.account)
@@ -209,7 +209,7 @@ func (e *Enumerator) resolveAccount() error {
 		if err != nil {
 			red.Printf("A matching Gravatar account for %s could not be retrieved.\n\n", e.account)
 			fmt.Println("To continue, you'll need the account's hash and some known elements about the target.")
-			fmt.Println("Use: hashtray account <HASH> -e element1 element2 ...")
+			fmt.Println("Use: hashtray-go account <HASH> -e element1 element2 ...")
 			return fmt.Errorf("no gravatar profile found")
 		}
 		e.profile = profile

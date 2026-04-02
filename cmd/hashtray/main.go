@@ -16,7 +16,7 @@ var version = "dev"
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:     "hashtray",
+		Use:     "hashtray-go",
 		Short:   "Gravatar Account and Email Finder",
 		Long:    banner(),
 		Version: version,
@@ -50,7 +50,7 @@ func main() {
 			if hash != profile.Hash {
 				color.Yellow("Note: The email hash (%s) differs from the profile hash (%s).", hash, profile.Hash)
 				color.Yellow("This email is likely a secondary email on the Gravatar account.")
-				fmt.Println("Use 'hashtray account' to find the primary email.")
+				fmt.Println("Use 'hashtray-go account' to find the primary email.")
 				fmt.Println()
 			}
 
@@ -131,7 +131,7 @@ func printUsage() {
 	cyan.Print("Find a gravatar account from an email: ")
 	fmt.Println()
 	fmt.Printf("  Usage: ")
-	yellow.Print("hashtray ")
+	yellow.Print("hashtray-go ")
 	red.Println("email user@example.com")
 	fmt.Println()
 
@@ -139,10 +139,10 @@ func printUsage() {
 	cyan.Print("Find a gravatar email from a username or hash: ")
 	fmt.Println()
 	fmt.Printf("  Usage: ")
-	yellow.Print("hashtray ")
+	yellow.Print("hashtray-go ")
 	red.Println("account username")
 	fmt.Printf("         ")
-	yellow.Print("hashtray ")
+	yellow.Print("hashtray-go ")
 	red.Println("account cc8c5b31041fcfd256ff6884ea7b28fb")
 	fmt.Println()
 }
