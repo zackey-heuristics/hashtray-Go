@@ -54,6 +54,23 @@ func TestEmptyDomains(t *testing.T) {
 	}
 }
 
+func TestOverflowDetection(t *testing.T) {
+	// 20 chunks with 455 domains in crazy mode should overflow
+	chunks := make([]string, 20)
+	for i := range chunks {
+		chunks[i] = string(rune('a' + i))
+	}
+	domains := make([]string, 455)
+	for i := range domains {
+		domains[i] = "d.com"
+	}
+	p := New(chunks, domains, true)
+	count := p.CombinationCount()
+	if count != -1 {
+		t.Errorf("expected -1 (overflow) for large input, got %d", count)
+	}
+}
+
 func TestSingleChunkOutput(t *testing.T) {
 	p := New([]string{"alice"}, []string{"test.com"}, false)
 	emails := collectAll(p.Generate())

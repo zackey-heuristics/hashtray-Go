@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"text/tabwriter"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
@@ -29,7 +30,7 @@ type Client struct {
 // NewClient creates a Gravatar HTTP client.
 func NewClient() *Client {
 	return &Client{
-		HTTP:    &http.Client{},
+		HTTP:    &http.Client{Timeout: 30 * time.Second},
 		BaseURL: baseURL,
 	}
 }
@@ -307,7 +308,6 @@ func (c *Client) AggregateProfile(id string) (*FullProfile, error) {
 // DisplayProfile prints a FullProfile as a formatted table.
 func DisplayProfile(fp *FullProfile) {
 	cyan := color.New(color.FgCyan, color.Bold)
-	white := color.New(color.FgHiWhite, color.Bold)
 
 	cyan.Printf("\n  %s\n\n", fp.PreferredUsername)
 
@@ -374,7 +374,6 @@ func DisplayProfile(fp *FullProfile) {
 	}
 
 	w.Flush()
-	_ = white // suppress unused
 	fmt.Println()
 }
 

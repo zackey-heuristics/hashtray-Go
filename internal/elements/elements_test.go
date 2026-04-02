@@ -56,16 +56,18 @@ func TestExtractWordPressDomain(t *testing.T) {
 			{Network: "WordPress", URL: "https://myblog.example.com"},
 		},
 	}
-	_, domains := Extract(profile)
-	found := false
-	for _, d := range domains {
-		if d == "myblog.example.com" || d == "example.com" {
-			found = true
+	elems, _ := Extract(profile)
+
+	// WordPress with subdomain should add the subdomain as an element
+	foundSubdomain := false
+	for _, e := range elems {
+		if e == "myblog" {
+			foundSubdomain = true
 		}
 	}
-	// WordPress with subdomain should add subdomain as element
-	// This test mainly verifies no panic
-	_ = found
+	if !foundSubdomain {
+		t.Errorf("expected 'myblog' element from WordPress subdomain, got elements: %v", elems)
+	}
 }
 
 func TestIsCombination(t *testing.T) {
