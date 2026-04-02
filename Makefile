@@ -17,8 +17,8 @@ clean:
 	rm -rf $(BINARY) dist/
 
 cross:
-	CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build $(LDFLAGS) -o dist/hashtray-go-linux-amd64 ./cmd/hashtray
-	CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build $(LDFLAGS) -o dist/hashtray-go-linux-arm64 ./cmd/hashtray
-	CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build $(LDFLAGS) -o dist/hashtray-go-darwin-amd64 ./cmd/hashtray
-	CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build $(LDFLAGS) -o dist/hashtray-go-darwin-arm64 ./cmd/hashtray
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o dist/hashtray-go-windows-amd64.exe ./cmd/hashtray
+	CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -buildvcs=false $(LDFLAGS) -o dist/hashtray-go-linux-amd64 ./cmd/hashtray
+	CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -buildvcs=false $(LDFLAGS) -o dist/hashtray-go-linux-arm64 ./cmd/hashtray
+	CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build -buildvcs=false $(LDFLAGS) -o dist/hashtray-go-darwin-amd64 ./cmd/hashtray
+	CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -buildvcs=false $(LDFLAGS) -o dist/hashtray-go-darwin-arm64 ./cmd/hashtray
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -buildvcs=false $(LDFLAGS) -o dist/hashtray-go-windows-amd64.exe ./cmd/hashtray
