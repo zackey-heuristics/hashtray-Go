@@ -249,8 +249,9 @@ func findLinks(doc *goquery.Document) []Link {
 			return
 		}
 		name := strings.TrimSpace(a.Text())
-		if len(name) >= 2 {
-			name = name[:len(name)-2]
+		runes := []rune(name)
+		if len(runes) >= 2 {
+			name = string(runes[:len(runes)-2])
 		}
 		href, _ := a.Attr("href")
 		desc := strings.TrimSpace(s.Find("p").Text())
